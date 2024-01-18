@@ -1,5 +1,5 @@
 ```
-git clone https://github.com/OmnicommFrontend/interview-task-1.git
+git clone https://github.com/mayerprog/universities-react.git
 ```
 
 Далее установить необходимые зависимости:
