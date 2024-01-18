@@ -1,45 +1,25 @@
-import React from 'react';
+import React from "react";
 
-class Pagination extends React.Component {
+function Pagination({ activePage, totalPages, onPageChange }) {
+  const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
 
-    constructor(props) {
-        super(props);
-        this.state = {
-            currentPage: 1
-        };
-    }
+  const handleClick = (pageNumber) => {
+    onPageChange(pageNumber);
+  };
 
-    handleClick(pageNumber) {
-        this.setState({
-            currentPage: pageNumber
-        });
-        this.props.onPageChange(pageNumber)
-    }
-
-    render() {
-        const {currentPage} = this.state;
-        const {itemsPerPage, totalItems} = this.props;
-        const totalPages = Math.ceil(totalItems / itemsPerPage);
-        const pageNumbers = [];
-        for (let i = 1; i <= totalPages; i++) {
-            pageNumbers.push(i);
-        }
-        return (
-            <div className="pagination">
-                {pageNumbers.map(number => (
-                    <button
-                        key={number}
-                        onClick={function() {
-                            this.handleClick(number)
-                        }}
-                        className={number === currentPage ? 'active' : ''}>
-                        {number}
-                    </button>
-                ))}
-            </div>
-        );
-    }
+  return (
+    <div className="pagination">
+      {pageNumbers.map((number) => (
+        <button
+          key={number}
+          onClick={() => handleClick(number)}
+          className={number === activePage ? "active" : ""}
+        >
+          {number}
+        </button>
+      ))}
+    </div>
+  );
 }
-
 
 export default Pagination;

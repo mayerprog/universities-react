@@ -1,38 +1,41 @@
-import { ApiMixinFactory } from './mixins/apiMixin'
-var tableMixin = require('./mixins/tableMixin').default
-var paginationMixin = require('./mixins/paginationMixin')
-var React = require('react')
-var createReactClass = require('create-react-class')
-var Pagination = require('./Pagination').default
-var $ = require('jquery')
+import React from "react";
+import $ from "jquery";
+import Pagination from "./Pagination";
+import useApi from "./hooks/useApi";
+import useTable from "./hooks/useTable";
+import usePagination from "./hooks/usePagination";
 
-const apiMixin =  ApiMixinFactory().getApiMixin($.ajax)
-var App = createReactClass({
-    mixins: [
-        tableMixin,
-        paginationMixin,
-        apiMixin
-    ],
-    render: function () {
-        var self = this
-            var start = (this.state.itemsPerPage * (this.state.activePage - 1))
-            var end = start * this.state.itemsPerPage
-            var universities = this.state.universities.slice(start, start * this.state.itemsPerPage)
-        var table = self.renderTable(universities)
+function App() {
+  const { universities, searchValue, handleSearchChange } = useApi($.ajax);
+  const { renderTable } = useTable();
+  const itemsPerPage = 10;
+  const { activePage, handlePageChange, totalPages } = usePagination(
+    universities,
+    itemsPerPage
+  );
 
-            return (<div>
-                <label htmlFor="#search">Поиск</label>
-                <br/>
-                <input id="search" onChange={this.handleSearchChange} type="string" value={this.state.value}/>
-                <div>
-                    {table}
-                </div>
-                <Pagination itemsPerPage={10}
-                            totalItems={this.state.universities.length}
-                            onPageChange={() =>self.handleClick()}/>
-                <div>{this.state.color}</div>
-            </div>)
-        }
-})
+  const start = itemsPerPage * (activePage - 1);
+  const end = start + itemsPerPage;
+  const displayedUniversities = universities.slice(start, end);
 
-export {App}
+  return (
+    <div>
+      <label htmlFor="search">Поиск</label>
+      <br />
+      <input
+        id="search"
+        onChange={handleSearchChange}
+        type="text"
+        value={searchValue}
+      />
+      <div>{renderTable(displayedUniversities)}</div>
+      <Pagination
+        activePage={activePage}
+        totalPages={totalPages}
+        onPageChange={handlePageChange}
+      />
+    </div>
+  );
+}
+
+export default App;
